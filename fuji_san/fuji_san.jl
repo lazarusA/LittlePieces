@@ -1,6 +1,7 @@
 using GLMakie, GLMakie.Colors, GLMakie.FileIO
 using HDF5, Downloads
 fid = h5open(joinpath(@__DIR__,"fuji.h5"), "r")
+# Data subset from  https://hydro.iis.u-tokyo.ac.jp/~yamadai/MERIT_DEM/
 topo = read(fid["fuji"])
 link = "https://upload.wikimedia.org/wikipedia/commons/9/94/Umegawa_in_Sagami_province.jpg"
 img = load(Downloads.download(link))
