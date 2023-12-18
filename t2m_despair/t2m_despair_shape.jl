@@ -5,9 +5,17 @@ using StatsBase
 using GLMakie.FileIO
 using Downloads
 using Dates
+GLMakie.activate!()
+
 link = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_THÉODORE_GÉRICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/640px-JEAN_LOUIS_THÉODORE_GÉRICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg"
 img = load(Downloads.download(link));
 
+# world map, coastlines
+img_w = load(joinpath(@__DIR__, "../imgs/world_map.png"))
+mask = Float32.(img_w .== img_w[1])
+mask_z = mask .== 0
+mask[mask_z] .= NaN;
+mesh(Sphere(Point3f(0),1); color=mask, nan_color=:red)
 # load data
 # let's assume that you have a monthly dataset with lon,lat,time data, then doing the following will make sense :D
 ds = Cube(joinpath(@__DIR__, "t2m_monthly.zarr/"))
@@ -41,6 +49,8 @@ x = @lift([(1+$ds_data[i,j]/150)*cos(φ) * sin(θ) for (i,θ) in enumerate(θ), 
 y = @lift([(1+$ds_data[i,j]/150)*sin(φ) * sin(θ) for (i,θ) in enumerate(θ), (j,φ) in enumerate(φ)])
 z = @lift([(1+$ds_data[i,j]/150)*cos(θ) for (i,θ) in enumerate(θ), (j,φ) in enumerate(φ)])
 
+ds_data_mask = @lift($ds_data .* mask)
+
 ds_data_series = Float32[]
 for ti in eachindex(tempo)
     num_month = month(tempo[ti])
@@ -66,9 +76,11 @@ ax_bar = Axis(fig[2,1:3]; yaxisposition = :right,)
 ax_img = Axis(fig[2,1:3]; aspect= DataAspect(), titlecolor=:silver, titlesize=12*fs,
     width= 150*fs, height= 120*fs, halign=0.0, valign=-0.2, tellwidth, tellheight)
 axs = [LScene(fig[1,i], show_axis=false) for i in 1:3]
-[surface!(axs[i], x,y,z; color = ds_data, highclip=:black,
+
+[surface!(axs[i], x,y,z; color = ds_data_mask, highclip=:black,
     lowclip=:grey8, colorscale = sc,
-    colorrange = (-1,3), colormap) for i in 1:3]
+    colorrange = (-1,3), colormap, nan_color=:grey80) for i in 1:3]
+
 [zoom!(axs[i].scene, cameracontrols(axs[i].scene), 0.65) for i in 1:3]
 image!(ax_img, rotr90(img[10:end-10, 10:end-10]))
 
@@ -131,20 +143,18 @@ display(fig; update=false)
 
 save(joinpath(@__DIR__, "../imgs/t2m_despair_w_x.png"), current_figure(),
     update=false)
-
-for i in [collect(1:39:876)..., 876]
-    t_step[] = i
-    save(joinpath(@__DIR__, "../imgs/t2m_despair_w_$(i).png"), current_figure(),
-        update=false)
-end
+# for i in [collect(1:39:876)..., 876]
+#     t_step[] = i
+#     save(joinpath(@__DIR__, "../imgs/t2m_despair_w_$(i).png"), current_figure(),
+#         update=false)
+# end
 
 record(fig, joinpath(@__DIR__,  "../imgs/t2m_despair_z.mp4"); framerate = 32, update=false) do io
-    for (idx,i) in enumerate(range(-1.5,4.5,876))
+    for (idx,i) in enumerate(range(-1.5,4.5, 876))
         t_step[] = idx
         rotate!(axs[1].scene, i)
         rotate!(axs[2].scene, i)
         rotate!(axs[3].scene, i)
-
         recordframe!(io)  # record a new frame
     end
 end
