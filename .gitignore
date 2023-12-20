@@ -2,6 +2,7 @@
 *.vscode
 *.zarr
 *.h5
+*.hgt
 *.DS_Store
 *.jl.cov
 *.jl.*.cov
