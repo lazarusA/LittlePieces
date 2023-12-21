@@ -1,6 +1,7 @@
 # code by Julius Krumbiegel and Lazaro Alonso
 import ArchGDAL as AG
 using GLMakie
+GLMakie.activate!()
 # a similar output, different approach
 # https://www.esri.com/arcgis-blog/products/arcgis-living-atlas/mapping/make-this-ai-inspired-topo-landscape-please/
 # get data from https://dwtkns.com/srtm30m/, for this example look for Jena, Germany
@@ -11,8 +12,7 @@ elev_band_cut = rotr90(elev_band[1900:2550, 400:700]') # do a cut
 cmap = ["#27755F","#5F9571","#E4DF60","#E2C14A","#BE591D"]
 cmap = Reverse(:Hokusai1) #Reverse(:Hokusai1) #Reverse(:sandyterrain) #:starrynight #:sunset #Reverse(:sienna) # :Winter #:Bay #Reverse(:Homer2) #Reverse(:Hiroshige) #:thermal #:lipari
 cmap = cgrad(resample_cmap(cmap, 100), scale=log2)
-_, _, ct = contourf(elev_band_cut; levels=40,
-    colormap = cmap)
+_, _, ct = contourf(elev_band_cut; levels=40, colormap = cmap)
 
 polys = ct.plots[1][1][]
 level_values = ct.plots[1].color[]
@@ -50,9 +50,15 @@ for (i, (poly, index)) in enumerate(zip(polys, level_indices))
     #lines!(ax, points_top; color=:black, linewidth=0.2, transparency=true) 
     band!(ax, points_bottom, points_top; color = colors[i], shading=FastShading)
 end
+Label(fig[0,1], rich(rich("MAX PLANCK INSTITUTE\n", color=:white, font=:bold),
+    rich("FOR BIOGEOCHEMISTRY", color=:white, fontsize=7*fs));
+    tellwidth=false, halign=0.01,  justification=:right, padding=(0,0,-10,10)
+    )
+
 Label(fig[0,1], rich(rich("Visualization by ", color=:white), rich("Lazaro Alonso & Julius Krumbiegel \n", color="white", font=:bold,
     rich("Created with ", color=:white), rich("Makie.jl", color=:greenyellow)));
-    tellwidth=false, halign=0.01,  justification=:left, padding=(0,0,-10,10))
+    tellwidth=false, halign=0.5,  justification=:center, padding=(0,0,-10,10)
+    )
 
 Label(fig[0,1], rich(rich("Topography of ", color=:white), rich("Jena, Germany \n", color="white", font=:bold,
     rich("Data ", color=:white), rich("30-Meter SRTM ", color=1.5colorant"orangered")));

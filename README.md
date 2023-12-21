@@ -22,7 +22,7 @@ Data: t2m-ERA5: ECMWCF
 ## Topography of Jena, Germany
 
 <p float="center">
-  <img src="imgs/elevation_jena.png" width="90%" /> 
+  <img src="imgs/elevation_jena_rpr.png" width="90%" /> 
 </p>
 
 Data: 30-Meter SRTM
