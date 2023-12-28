@@ -28,10 +28,18 @@ Data: t2m-ERA5: ECMWCF
 Data: 30-Meter SRTM
 
 ---
-## Forecast vegetation greenness at fine resolution over Africa.
+## Forecast vegetation greenness at fine resolution over Africa
 
 <p float="center">
   <img src="imgs/ndvi_samples.png" width="90%" /> 
+</p>
+
+---
+
+## Global snowfall
+
+<p float="center">
+  <img src="imgs/snowfall.png" width="90%" /> 
 </p>
 
 ---
