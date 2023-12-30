@@ -43,3 +43,18 @@ Data: 30-Meter SRTM
 </p>
 
 ---
+
+## Ozone hole
+
+<p float="center">
+  <img src="imgs/ozone_hole.png" width="90%" /> 
+</p>
+
+> Created using `ozone_layer_SSH.jl`
+
+Interesting links and inspiration:
+- https://atmosphere.copernicus.eu/monitoring-ozone-layer
+- https://www.unep.org/news-and-stories/story/rebuilding-ozone-layer-how-world-came-together-ultimate-repair-job
+- https://www.youtube.com/watch?v=SDPxBZSXxpE
+
+---
