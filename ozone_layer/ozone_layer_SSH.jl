@@ -158,7 +158,7 @@ Label(fig[1,2], rich("09-01 ⋅ 00:00:00", color=:white);
     tellheight=false, tellwidth=false,justification=:left,
     valign=0.63, halign=0.5)
 
-Label(fig[0,1], rich("What happend to the ozone hole? Did it just go away?\n",
+Label(fig[0,1], rich("What happened to the ozone hole? Did it just go away?\n",
     rich("Data: CAMS global reanalysis (EAC4)  -   ECMWF",
     color=:white, font=:regular, fontsize=14), color=1.5*cmap[1], font=:bold, fontsize=16);
     tellwidth=false, halign=0.0, justification=:left
@@ -172,7 +172,7 @@ Box(ax_g[1,1:3], color=(0.25colorant"#232e41", 0.8), tellheight=false, tellwidth
 
 Label(ax_g[1,1:3], rich("Ozone mass mixing ratio is the mass of ", 
     rich("ozone per kilogram of air. ", color=:lightseagreen),
-    rich("So, what\nhappend to the ozone hole? "),
+    rich("So, what\nhappened to the ozone hole? "),
     rich("Well, "), rich("is still there, ", color=1.5cmap[1]), rich("however the trend over the \n"),
     rich("last five to ten years has been, ", color=:white),
     rich("NO INCREASE ", color=1.25colorant"dodgerblue", font=:bold),
@@ -230,15 +230,17 @@ if september
     save(joinpath(@__DIR__, "../imgs/ozone_hole.png"), fig, update=false)
 end
 
-record(fig, joinpath(@__DIR__,  "../imgs/ozone_laye_24_n.mp4"); framerate = 24, update=false) do io
-    for i_time in eachindex(tempo) #data was corrupted after this time stamp
-        ddata = replace(ds.data[:,:,:, i_time], missing=>NaN)
-        new_binners = get_binners(ddata, lat, lon)
-        m_new_values = vcat(get_values.(new_binners[1:n_l])...)
-        m_values_obs[] = m_new_values
-        tempo_i[] = tempo[i_time]
-        notify(m_values_obs)
-        notify(tempo_i)
-        recordframe!(io)  # record a new frame
+if !september
+    record(fig, joinpath(@__DIR__,  "../imgs/ozone_laye_24_n.mp4"); framerate = 24, update=false) do io
+        for i_time in eachindex(tempo) #data was corrupted after this time stamp
+            ddata = replace(ds.data[:,:,:, i_time], missing=>NaN)
+            new_binners = get_binners(ddata, lat, lon)
+            m_new_values = vcat(get_values.(new_binners[1:n_l])...)
+            m_values_obs[] = m_new_values
+            tempo_i[] = tempo[i_time]
+            notify(m_values_obs)
+            notify(tempo_i)
+            recordframe!(io)  # record a new frame
+        end
     end
 end
