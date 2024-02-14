@@ -32,6 +32,7 @@ Data: 30-Meter SRTM
 
 <p float="center">
   <img src="imgs/ndvi_samples.png" width="90%" /> 
+  <img src="imgs/ndvi_dashboard_2x.png" width="90%" /> 
 </p>
 
 ---
