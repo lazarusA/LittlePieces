@@ -53,6 +53,8 @@ init_index = findall(x->x=="28PCU0804", cubes_names)[1]
 # generate point instances
 ndvi_points = [Point3f(i,j,k) for i in range(1,32,10) for j in 1:128 for k in 1:128];
 
+#ndvi_points_2 = [Point3f(i,j,k) for i in range(1,32,10), j in 1:128, k in 1:128];
+
 # Observables
 idx_pos = Observable(init_index)
 mv_point = @lift(wm_points[$idx_pos])
@@ -95,7 +97,7 @@ flat = maximum(lats) + 0.2
 extent = Extent(X = (ilon, flon), Y = (ilat, flat));
 
 with_theme(theme_ggplot2()) do
-    fig = Figure(; figure_padding=(15,15,5,0), size = (1600,900),
+    fig = Figure(; figure_padding=(15,15,5,0), size = (1400,900),
         backgroundcolor=1.15colorant"gainsboro",
         fontsize=16, fonts = (; regular="CMU Serif"))
     low_lay = GridLayout(fig[2,1:3])
@@ -196,22 +198,27 @@ with_theme(theme_ggplot2()) do
         tellwidth=false, halign=0.05,  justification=:right, padding=(0,0,10,10)
         )
     
-    Label(fig[2,1:end], rich(rich("Visualization by ", color=:black), rich("Lazaro Alonso\n ", color="#0087d7", font=:bold,
+    Label(g_lay[1,1:4, Bottom()], rich(rich("Visualization by ", color=:black), rich("Lazaro Alonso\n ", color="#0087d7", font=:bold,
         )
         );
         tellheight=false,
-        tellwidth=false, halign=0.99, 
-        valign=-0.5,
+        tellwidth=false,
+        halign=0.99, 
+        valign=1,
         fontsize=16,
         justification=:center, padding=(0,0,10,10)
         )
 
-    Label(fig[1,1:end], rich("DEEP\nCUBE\n", rich("Explainable AI pipelines for big Copernicus data\nA Horizon 2020 research and innovation project",
+    Label(fig[1,1:end, Top()], rich("DEEP\nCUBE\n",
+        rich("Explainable AI pipelines for big Copernicus data\nA Horizon 2020 research and innovation project",
         font=:regular,fontsize= 12*fs, color = 0.7*colorant"steelblue1"), font=:bold, color=colorant"dodgerblue3", fontsize= 16*fs,),
         tellwidth=false,tellheight=false,
-        halign=0.98, justification=:left,
-        valign=1.125,
-        padding=(0,0,10,10))
+        halign=1,
+        #justification=:left,
+        #valign=-0.0001,
+        padding=(0,0,20,0)
+        )
+
     Label(fig[1,2:3], rich("Claire Robin, et. al. ",
         rich("Learning to forecast vegetation greenness at fine resolution over Africa with ConvLSTMs\n", color=0.5colorant"olivedrab2", font=:bold),
         rich("Artificial Intelligence for Humanitarian Assistance and Disaster Response.\nWorkshop at NeurIPS 2022, ",
@@ -264,3 +271,5 @@ end
 #save(joinpath(@__DIR__, "../imgs/ndvi_dashboard_2x.png"), current_figure(), px_per_unit=2, update=false)
 #save(joinpath(@__DIR__, "../imgs/ndvi_dashboard_2x_zoom.png"), current_figure(), px_per_unit=2, update=false)
 #save(joinpath(@__DIR__, "../imgs/ndvi_dashboard_2x_zoom2.png"), current_figure(), px_per_unit=2, update=false)
+
+# add TileProviders#main Tyler#master
