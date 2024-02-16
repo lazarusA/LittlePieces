@@ -53,9 +53,9 @@ init_index = findall(x->x=="28PCU0804", cubes_names)[1]
 # generate point instances
 ndvi_points = [Point3f(i,j,k) for i in range(1,32,10) for j in 1:128 for k in 1:128];
 
-#ndvi_points_2 = [Point3f(i,j,k) for i in range(1,32,10), j in 1:128, k in 1:128];
-
 # Observables
+time_scroll = Observable(0)
+
 idx_pos = Observable(init_index)
 mv_point = @lift(wm_points[$idx_pos])
 # lift for cube name !
@@ -86,6 +86,9 @@ alpha = @lift($stats[:,:,2])
 r_corr = @lift($stats[:,:,3])
 beta = @lift($stats[:,:,4])
 
+# scroll time slices
+scrolled_ndvi_values = @lift(circshift($ndvi_values, -9*($time_scroll*128*128)))
+scrolled_ndvi_values_pred = @lift(circshift($ndvi_values_pred, -9*($time_scroll*128*128)))
 
 cmap = :Spectral
 fs=1
@@ -178,20 +181,29 @@ with_theme(theme_ggplot2()) do
     ax = LScene(fig[1,2]; show_axis=false)
 
     plt = meshscatter!(ndvi_points; marker=Rect3f(Vec3f(-0.5),Vec3f(1)),
-        color=ndvi_values, colormap=cmap, shading=FastShading, colorrange=(0,1),
+        color=scrolled_ndvi_values, colormap=cmap, shading=FastShading, colorrange=(0,1),
         lowclip=:grey9, nan_color= (:grey10, 0.05),
         markersize=Vec3f(0.8*3,0.99,0.99))
 
     ax_p = LScene(fig[1,3]; show_axis=false)
 
     plt_p = meshscatter!(ax_p, ndvi_points; marker=Rect3f(Vec3f(-0.5),Vec3f(1)),
-        color=ndvi_values_pred, colormap=cmap, shading=FastShading, colorrange=(0,1),
+        color=scrolled_ndvi_values_pred, colormap=cmap, shading=FastShading, colorrange=(0,1),
         lowclip=:grey9, nan_color= (:grey10, 0.05),
         markersize=Vec3f(0.8*3,0.99,0.99))
 
     Colorbar(fig[1,2, Bottom()], plt; vertical=false,
         label=@lift(rich("NDVI  ", rich("$($c_name)", font=:bold, color=:tan1))),
         width=Relative(0.3), tellwidth=false, halign=0)
+
+    sg = SliderGrid(
+            fig[1, 2, Bottom()],
+            (label = "Time Scroller", range = 0:10, startvalue = 0, color_active=:black,
+            color_inactive=(:grey9, 0.2), color_active_dimmed=:gold1,),
+            width=Relative(0.5),
+            halign=0.75,
+            tellheight = false)
+    connect!(time_scroll, sg.sliders[1].value)
 
     Label(fig[0,1:end], rich(rich("MAX PLANCK INSTITUTE\n", color=:black, font=:bold),
         rich("FOR BIOGEOCHEMISTRY", color=:grey8, fontsize=12*fs));
@@ -258,7 +270,7 @@ with_theme(theme_ggplot2()) do
             if plt == p
                 idx_pos[] = i
                 notify(idx_pos)
-                notify(name_var)
+                #notify(name_var)
                 return Consume(true)
             end
             #center!(ax.scene)
