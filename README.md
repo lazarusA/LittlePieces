@@ -59,3 +59,9 @@ Interesting links and inspiration:
 - https://www.youtube.com/watch?v=SDPxBZSXxpE
 
 ---
+
+## NDVI from Space, 10m resolution
+
+<p float="center">
+  <img src="imgs/ndvi_from_space.png" width="90%" /> 
+</p>

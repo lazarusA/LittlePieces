@@ -161,6 +161,7 @@ Label(fig[0,1], rich("Global Snowfall: ", color=:orange, font=:bold, fontsize=20
 Label(fig[0,3], rich(rich("Visualization by ", color=:white), rich("Lazaro Alonso\n", color=:dodgerblue,
     rich("Created with ", color=:white), rich("Makie.jl", color=:orange)));
     tellwidth=false, halign=0.5,  justification=:left)
+    
 Box(fig[1,1:3], color=(0.25colorant"#232e41", 0.8), tellheight=false, tellwidth=false,
     valign=-0.015, halign=0.34, width=520, height=120, cornerradius=10)
 
